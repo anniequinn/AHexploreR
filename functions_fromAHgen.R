@@ -1,19 +1,3 @@
-weightEdges <- function(x, y) {
-
-  # x is the edge list to modify
-  # y is the edge list with the new weightings
-
-  output <-
-    x %>%
-    left_join(y, by = c("layer", "from", "to")) %>%
-    mutate(weight = coalesce(weightNew, weight)) %>%
-    select(-weightNew) %>%
-    arrange(layer, from, to)
-
-  return(output)
-
-}
-
 visLayout <- function(edgelist, vInfo, key, spacing) {
 
   require(ggraph)
@@ -237,37 +221,100 @@ visPlot <- function(layout, key = NULL,
 
 }
 
-visPlotly <- function(ggplotPlot,
-                       edgeNames = c("Layer 1 - FP to VPM",
-                                     "Layer 2 - VPM to GF",
-                                     "Layer 3 - GF to ORP",
-                                     "Layer 4 - ORP to PO"),
-                       vNames = paste0("Level ", 1:5)) {
+findOrphans <- function(edgelist) {
+  
+  edgelist %>%
+    group_by(from) %>%
+    summarise(sum = sum(weight), .groups = "drop_last") %>%
+    filter(sum == 0) %>%
+    pull(from)
+  
+}
 
-  require(plotly)
-
-  # If encountering problems, use development version
-  # devtools::install_github("ropensci/plotly")
-
-
-
-  output <-
-    ggplotly(ggplotPlot, tooltip = "vName") %>%
-    layout(legend = list(orientation = "h", x = 0, y = 1))
-
-  output <- plotly_build(output)
-
-  output$x$data[[1]][8:9] <- edgeNames[[1]]
-  output$x$data[[2]][8:9] <- edgeNames[[2]]
-  output$x$data[[3]][8:9] <- edgeNames[[3]]
-  output$x$data[[4]][8:9] <- edgeNames[[4]]
-
-  output$x$data[[5]][8:9] <- vNames[[1]]
-  output$x$data[[6]][8:9] <- vNames[[2]]
-  output$x$data[[7]][8:9] <- vNames[[3]]
-  output$x$data[[8]][8:9] <- vNames[[4]]
-  output$x$data[[9]][8:9] <- vNames[[5]]
-
-  return(output)
-
+vNetwork <- function(vName, vInfo, edgelist, direction = c("both", "up", "down")) {
+  
+  # FUNCTIONS
+  networkDown <- function(vName, vInfo, edgelist) {
+    
+    edges <- list()
+    vertices <- list()
+    
+    myVertex <- vName
+    myLevel <- vInfo %>% filter(vName %in% myVertex) %>% pull(level)
+    
+    vertices[[myLevel]] <- myVertex
+    
+    levels <- seq(myLevel, max(edgelist$fromLevel), 1)
+    
+    for(i in levels) {
+      
+      edges[[i]] <- edgelist %>% filter(fromLevel == i) %>% filter(from %in% vertices[[i]])
+      vertices[[i+1]] <- edges[[i]] %>% pull(to) %>% unique
+      
+    }
+    
+    vertices <- do.call(c, vertices)
+    vertices <- vInfo %>% filter(vName %in% vertices)
+    edges <- do.call(rbind, edges)
+    
+    list(vertices = vertices, edges = edges)
+    
+  }
+  
+  networkUp <- function(vName, vInfo, edgelist) {
+    
+    edges <- list()
+    vertices <- list()
+    
+    myVertex <- vName
+    myLevel <- vInfo %>% filter(vName %in% myVertex) %>% pull(level)
+    
+    vertices[[myLevel]] <- myVertex
+    
+    levels <- seq(myLevel, min(edgelist$toLevel), -1)
+    
+    for(i in levels) {
+      
+      edges[[i]] <- edgelist %>% filter(toLevel == i) %>% filter(to %in% vertices[[i]])
+      vertices[[i-1]] <- edges[[i]] %>% pull(from) %>% unique
+      
+    }
+    
+    vertices <- do.call(c, vertices)
+    vertices <- vInfo %>% filter(vName %in% vertices)
+    edges <- do.call(rbind, edges)
+    
+    list(vertices = vertices, edges = edges)
+    
+  }
+  
+  
+  # APPLIED
+  edges <- list()
+  vertices <- list()
+  
+  myVertex <- vName
+  myLevel <- vInfo %>% filter(vName %in% myVertex) %>% pull(level)
+  
+  if((direction == "both" | direction == "up") & myLevel != 1) {
+    
+    tmp <- networkUp(vName, vInfo, edgelist)
+    edges[["up"]] <- tmp$edges
+    vertices[["up"]] <- tmp$vertices
+    
+  }
+  
+  if((direction == "both" | direction == "down") & myLevel != 5) {
+    
+    tmp <- networkDown(vName, vInfo, edgelist)
+    edges[["down"]] <- tmp$edges
+    vertices[["down"]] <- tmp$vertices
+    
+  }
+  
+  vertices <- do.call(rbind, vertices)
+  edges <- do.call(rbind, edges)
+  
+  list(vertices = vertices, edges = edges)
+  
 }

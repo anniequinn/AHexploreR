@@ -1,8 +1,6 @@
-# Turn on edge hovering
+# Next steps:
 # Add text labels
-# Tidy up the panel bar
-# Make the panel bar a dropdown/hover?
-# Have help text when hovering
+
 
 # -------------------------------------------------------------------------
 # SETUP -------------------------------------------------------------------
@@ -22,8 +20,7 @@ library(colourpicker)
 # -------------------------------------------------------------------------
 # DATA --------------------------------------------------------------------
 # -------------------------------------------------------------------------
-source("misc.R")
-source("newFunctions.R")
+source("functions_fromAHgen.R")
 
 WRCcols <- c("#CCB1B9", "#607EBC", "#77B7A6", "#64324D", "#413D4C")
 extraCols <- c("#0D0A0B", "#FABE46")
@@ -75,9 +72,9 @@ pickerChoices <- list(
 ui <- fluidPage(
   
   br(),
-
   
-# BUTTON - NODE SETTINGS --------------------------------------------------
+  
+  # BUTTON - NODE SETTINGS --------------------------------------------------
   sidebarLayout(
     
     
@@ -90,105 +87,105 @@ ui <- fluidPage(
                  
                  fluidRow(
                    column(width = 2, dropdownButton(
-                   
-                   # SETTINGS
-                   circle = TRUE, 
-                   status = "primary", # Button colour
-                   icon = icon("sitemap"), 
-                   width = "500px",
-                   tooltip = tooltipOptions(title = "Click to change network settings"),
-                   
-                   
-                   
-                   tags$h3("Network settings"),
-                   
-                   
-                   tags$h5("Adjust arc angle, radius (distance between levels), node size and the colours of nodes in each level. Press update network to see changes."),
-                   
-                   fluidRow(
+                     
+                     # SETTINGS
+                     circle = TRUE, 
+                     status = "primary", # Button colour
+                     icon = icon("sitemap"), 
+                     width = "500px",
+                     tooltip = tooltipOptions(title = "Click to change network settings"),
                      
                      
                      
-                     column(width = 3, tags$h5(strong(paste0("Level"))), tags$body(tags$div(id="h5", style="padding:3%")),
-                           fluidRow(tags$h5("1 - Functional purposes"), tags$body(tags$div(id="h5", style="padding:0.5%")), style=list("padding-left: 10%;")),
-                           fluidRow(tags$h5("2 - Values and priority measures"), tags$body(tags$div(id="h5", style="padding:0.25%")), style=list("padding-left: 10%;")),
-                           fluidRow(tags$h5("3 - Objective functions"), tags$body(tags$div(id="h5", style="padding:0.5%")), style=list("padding-left: 10%;")),
-                           fluidRow(tags$h5("4 - Object-related processes"), tags$body(tags$div(id="h5", style="padding:0.25%")), style=list("padding-left: 10%;")),
-                           fluidRow(tags$h5("5 - Physical objects"), tags$body(tags$div(id="h5", style="padding:0.5%")), style=list("padding-left: 10%;"))
-                           ),
+                     tags$h3("Network settings"),
                      
-                     column(width = 2, tags$h5(strong(paste0("Arc angle"))),
-                            fluidRow(numericInput("angle1", label = NULL, value = 55, step = 5, min = 5, max = 180, width = "80%")),
-                            fluidRow(numericInput("angle2", label = NULL, value = 60, step = 5, min = 5, max = 180, width = "80%")),
-                            fluidRow(numericInput("angle3", label = NULL, value = 65, step = 5, min = 5, max = 180, width = "80%")),
-                            fluidRow(numericInput("angle4", label = NULL, value = 70, step = 5, min = 5, max = 180, width = "80%")),
-                            fluidRow(numericInput("angle5", label = NULL, value = 75, step = 5, min = 5, max = 180, width = "80%"))
+                     
+                     tags$h5("Adjust arc angle, radius (distance between levels), node size and the colours of nodes in each level. Press update network to see changes."),
+                     
+                     fluidRow(
+                       
+                       
+                       
+                       column(width = 3, tags$h5(strong(paste0("Level"))), tags$body(tags$div(id="h5", style="padding:3%")),
+                              fluidRow(tags$h5("1 - Functional purposes"), tags$body(tags$div(id="h5", style="padding:0.5%")), style=list("padding-left: 10%;")),
+                              fluidRow(tags$h5("2 - Values and priority measures"), tags$body(tags$div(id="h5", style="padding:0.25%")), style=list("padding-left: 10%;")),
+                              fluidRow(tags$h5("3 - Objective functions"), tags$body(tags$div(id="h5", style="padding:0.5%")), style=list("padding-left: 10%;")),
+                              fluidRow(tags$h5("4 - Object-related processes"), tags$body(tags$div(id="h5", style="padding:0.25%")), style=list("padding-left: 10%;")),
+                              fluidRow(tags$h5("5 - Physical objects"), tags$body(tags$div(id="h5", style="padding:0.5%")), style=list("padding-left: 10%;"))
+                       ),
+                       
+                       column(width = 2, tags$h5(strong(paste0("Arc angle"))),
+                              fluidRow(numericInput("angle1", label = NULL, value = 55, step = 5, min = 5, max = 180, width = "80%")),
+                              fluidRow(numericInput("angle2", label = NULL, value = 60, step = 5, min = 5, max = 180, width = "80%")),
+                              fluidRow(numericInput("angle3", label = NULL, value = 65, step = 5, min = 5, max = 180, width = "80%")),
+                              fluidRow(numericInput("angle4", label = NULL, value = 70, step = 5, min = 5, max = 180, width = "80%")),
+                              fluidRow(numericInput("angle5", label = NULL, value = 75, step = 5, min = 5, max = 180, width = "80%"))
+                       ),
+                       
+                       column(width = 2, tags$h5(strong(paste0("Increase radius"))),
+                              fluidRow(numericInput("r1", label = NULL, value = 0, step = 0.1, min = 0, max = 10, width = "80%")), 
+                              fluidRow(numericInput("r2", label = NULL, value = 0, step = 0.1, min = 0, max = 10, width = "80%")), 
+                              fluidRow(numericInput("r3", label = NULL, value = 0, step = 0.1, min = 0, max = 10, width = "80%")), 
+                              fluidRow(numericInput("r4", label = NULL, value = 0.5, step = 0.1, min = 0, max = 10, width = "80%")), 
+                              fluidRow(numericInput("r5", label = NULL, value = 1.0, step = 0.1, min = 0, max = 10, width = "80%"))
+                       ),
+                       
+                       column(width = 2, tags$h5(strong(paste0("Node size"))),
+                              fluidRow(numericInput("s1", label = NULL, value = 6, step = 0.1, min = 0.1, max = 10, width = "80%")), 
+                              fluidRow(numericInput("s2", label = NULL, value = 5, step = 0.1, min = 0.1, max = 10, width = "80%")), 
+                              fluidRow(numericInput("s3", label = NULL, value = 4, step = 0.1, min = 0.1, max = 10, width = "80%")), 
+                              fluidRow(numericInput("s4", label = NULL, value = 3.5, step = 0.1, min = 0.1, max = 10, width = "80%")), 
+                              fluidRow(numericInput("s5", label = NULL, value = 2, step = 0.1, min = 0.1, max = 10, width = "80%"))
+                       ),
+                       
+                       column(width = 2, tags$h5(strong(paste0("Node colour"))),
+                              
+                              
+                              # COLOURS
+                              fluidRow(colourInput("col1", NULL, value = WRCcols[[1]], palette = "limited", allowedCols = WRCcols, closeOnClick = TRUE), style=list("padding-right: 0%;")),
+                              fluidRow(colourInput("col2", NULL, value = WRCcols[[2]], palette = "limited", allowedCols = WRCcols, closeOnClick = TRUE), style=list("padding-right: 0%;")),
+                              fluidRow(colourInput("col3", NULL, value = WRCcols[[3]], palette = "limited", allowedCols = WRCcols, closeOnClick = TRUE), style=list("padding-right: 0%;")),
+                              fluidRow(colourInput("col4", NULL, value = WRCcols[[4]], palette = "limited", allowedCols = WRCcols, closeOnClick = TRUE), style=list("padding-right: 0%;")),
+                              fluidRow(colourInput("col5", NULL, value = WRCcols[[5]], palette = "limited", allowedCols = WRCcols, closeOnClick = TRUE), style=list("padding-right: 0%;"))
+                              
+                       )),
+                     
+                     
+                     # SUBMIT BUTTON
+                     actionBttn(inputId = "submitMatrix", label = "Update network", style = "jelly", color = "primary"),
+                     hr(style = "border-top: 1px solid #D0D5DA;"),
+                     
+                     
+                     # SLIDERS
+                     tags$h5(strong(paste0("Live update:"))),
+                     fluidRow(
+                       column(width = 4, sliderInput("edgeSpacing", label = "Node spacing", min = 0, max = 1, value = c(1,1), step = 0.05, ticks = FALSE)),
+                       column(width = 4, sliderInput("edgeAlpha", label = "Edge opacity", min = 0, max = 1, value = 0.4, step = 0.1, ticks = FALSE)),
+                       column(width = 4, sliderInput("edgeGrey", label = "Edge grayness", min = 1, max = 9, value = 6, step = 1, ticks = FALSE))
                      ),
                      
-                     column(width = 2, tags$h5(strong(paste0("Increase radius"))),
-                            fluidRow(numericInput("r1", label = NULL, value = 0, step = 0.1, min = 0, max = 10, width = "80%")), 
-                            fluidRow(numericInput("r2", label = NULL, value = 0, step = 0.1, min = 0, max = 10, width = "80%")), 
-                            fluidRow(numericInput("r3", label = NULL, value = 0, step = 0.1, min = 0, max = 10, width = "80%")), 
-                            fluidRow(numericInput("r4", label = NULL, value = 0.5, step = 0.1, min = 0, max = 10, width = "80%")), 
-                            fluidRow(numericInput("r5", label = NULL, value = 1.0, step = 0.1, min = 0, max = 10, width = "80%"))
-                     ),
+                     # SWITCH
+                     materialSwitch(inputId = "submitCircles", label = strong(paste("Toggle underlying circles:")), status = "primary", inline = TRUE)
                      
-                     column(width = 2, tags$h5(strong(paste0("Node size"))),
-                            fluidRow(numericInput("s1", label = NULL, value = 6, step = 0.1, min = 0.1, max = 10, width = "80%")), 
-                            fluidRow(numericInput("s2", label = NULL, value = 5, step = 0.1, min = 0.1, max = 10, width = "80%")), 
-                            fluidRow(numericInput("s3", label = NULL, value = 4, step = 0.1, min = 0.1, max = 10, width = "80%")), 
-                            fluidRow(numericInput("s4", label = NULL, value = 3.5, step = 0.1, min = 0.1, max = 10, width = "80%")), 
-                            fluidRow(numericInput("s5", label = NULL, value = 2, step = 0.1, min = 0.1, max = 10, width = "80%"))
-                     ),
-                     
-                   column(width = 2, tags$h5(strong(paste0("Node colour"))),
-                   
-                   
-                   # COLOURS
-                   fluidRow(colourInput("col1", NULL, value = WRCcols[[1]], palette = "limited", allowedCols = WRCcols, closeOnClick = TRUE), style=list("padding-right: 0%;")),
-                   fluidRow(colourInput("col2", NULL, value = WRCcols[[2]], palette = "limited", allowedCols = WRCcols, closeOnClick = TRUE), style=list("padding-right: 0%;")),
-                   fluidRow(colourInput("col3", NULL, value = WRCcols[[3]], palette = "limited", allowedCols = WRCcols, closeOnClick = TRUE), style=list("padding-right: 0%;")),
-                   fluidRow(colourInput("col4", NULL, value = WRCcols[[4]], palette = "limited", allowedCols = WRCcols, closeOnClick = TRUE), style=list("padding-right: 0%;")),
-                   fluidRow(colourInput("col5", NULL, value = WRCcols[[5]], palette = "limited", allowedCols = WRCcols, closeOnClick = TRUE), style=list("padding-right: 0%;"))
-                   
                    )),
                    
                    
-                   # SUBMIT BUTTON
-                   actionBttn(inputId = "submitMatrix", label = "Update network", style = "jelly", color = "primary"),
-                   hr(style = "border-top: 1px solid #D0D5DA;"),
-
-                   
-                   # SLIDERS
-                   tags$h5(strong(paste0("Live update:"))),
-                   fluidRow(
-                     column(width = 4, sliderInput("edgeSpacing", label = "Node spacing", min = 0, max = 1, value = c(1,1), step = 0.05, ticks = FALSE)),
-                     column(width = 4, sliderInput("edgeAlpha", label = "Edge opacity", min = 0, max = 1, value = 0.4, step = 0.1, ticks = FALSE)),
-                     column(width = 4, sliderInput("edgeGrey", label = "Edge grayness", min = 1, max = 9, value = 6, step = 1, ticks = FALSE))
-                     ),
-                   
-                   # SWITCH
-                   materialSwitch(inputId = "submitCircles", label = strong(paste("Toggle underlying circles:")), status = "primary", inline = TRUE)
-                   
-                 )),
-                 
-                 
-                 column(width = 2, dropdownButton(
-                   
-                   # SETTINGS
-                   circle = TRUE, 
-                   status = "primary", # Button colour
-                   icon = icon("expand-arrows-alt"), 
-                   width = "200px",
-                   tooltip = tooltipOptions(title = "Click to resize"),
-                   
-                   tags$h3("Resize plot"),
-                   
-                   # PLOT SIZE
-                   numericInput("width", label = "Plot width (inches):", value = 1),
-                   numericInput("height", label = "Plot height (inches):", value = 1)
-                   
-                 ))),
+                   column(width = 2, dropdownButton(
+                     
+                     # SETTINGS
+                     circle = TRUE, 
+                     status = "primary", # Button colour
+                     icon = icon("expand-arrows-alt"), 
+                     width = "200px",
+                     tooltip = tooltipOptions(title = "Click to resize"),
+                     
+                     tags$h3("Resize plot"),
+                     
+                     # PLOT SIZE
+                     numericInput("width", label = "Plot width (inches):", value = 1),
+                     numericInput("height", label = "Plot height (inches):", value = 1)
+                     
+                   ))),
                  
                  hr(style = "border-top: 1px solid #D0D5DA;"),
                  
@@ -268,28 +265,28 @@ server <- function(input, output, session) {
   size <- reactive({ c(input$s1, input$s2, input$s3, input$s4, input$s5) })
   
   DL <- reactive({
-  
-  DL <- list()
-  DL$dv <- dl$dv %>% filter(level >= input$selectLevels[[1]] & level <= input$selectLevels[[2]])
-  DL$de <- 
-    dl$de %>% 
-    separate(layer, c("tmp", "tmp2"), remove = FALSE) %>% 
-    inner_join(tmpKey %>% 
-                 mutate(fromLevel = str_sub(label,1,1) %>% as.numeric)) %>% 
-    select(-tmp, -label) %>% 
-    rename(tmp = tmp2) %>% 
-    inner_join(tmpKey %>% 
-                 mutate(toLevel = str_sub(label,1,1) %>% 
-                          as.numeric)) %>% 
-    select(-tmp, -label) %>% 
-    select(layer, fromLevel, toLevel, from, to, weight) %>%
-    filter(fromLevel >= input$selectLevels[[1]] & toLevel <= input$selectLevels[[2]]) %>%
-    select(layer, from, to, weight)
-  
-  return(DL)
-  
+    
+    DL <- list()
+    DL$dv <- dl$dv %>% filter(level >= input$selectLevels[[1]] & level <= input$selectLevels[[2]])
+    DL$de <- 
+      dl$de %>% 
+      separate(layer, c("tmp", "tmp2"), remove = FALSE) %>% 
+      inner_join(tmpKey %>% 
+                   mutate(fromLevel = str_sub(label,1,1) %>% as.numeric)) %>% 
+      select(-tmp, -label) %>% 
+      rename(tmp = tmp2) %>% 
+      inner_join(tmpKey %>% 
+                   mutate(toLevel = str_sub(label,1,1) %>% 
+                            as.numeric)) %>% 
+      select(-tmp, -label) %>% 
+      select(layer, fromLevel, toLevel, from, to, weight) %>%
+      filter(fromLevel >= input$selectLevels[[1]] & toLevel <= input$selectLevels[[2]]) %>%
+      select(layer, from, to, weight)
+    
+    return(DL)
+    
   })
-
+  
   
   # REACTIVE
   toListen <- reactive({ 
@@ -304,7 +301,7 @@ server <- function(input, output, session) {
          input$width,
          input$height,
          input$selectLevels
-         ) 
+    ) 
   })
   
   
@@ -332,7 +329,7 @@ server <- function(input, output, session) {
                                  vInfo = DL()$dv, 
                                  key = myKey, 
                                  spacing = list(min = input$edgeSpacing[[1]], max = input$edgeSpacing[[2]]))
-
+                 
                  
                  # DATA
                  nodes <- vl$vertices
@@ -348,9 +345,9 @@ server <- function(input, output, session) {
                  if(input$myNodes != "No selection") { 
                    
                    vl <- visLayout(edgelist = dl$de,
-                                    vInfo = dl$dv, 
-                                    key = myKey2, 
-                                    spacing = list(min = input$edgeSpacing[[1]], max = input$edgeSpacing[[2]]))
+                                   vInfo = dl$dv, 
+                                   key = myKey2, 
+                                   spacing = list(min = input$edgeSpacing[[1]], max = input$edgeSpacing[[2]]))
                    
                    vl <- vNetwork(input$myNodes, vl$vertices, vl$edges, direction = "both") 
                    subNodes <- vl$vertices %>% filter(level >= input$selectLevels[[1]] & level <= input$selectLevels[[2]])
@@ -464,7 +461,7 @@ server <- function(input, output, session) {
                  # Manipulate non-data ink
                  basePlot <- basePlot + 
                    
-                   theme_void(base_size = 18) +
+                   theme_void(base_size = 18, base_family = "sans-serif") +
                    
                    theme(legend.title = element_blank(),
                          legend.text = element_text(margin = margin(r = 25, unit = "pt")),
@@ -501,7 +498,7 @@ server <- function(input, output, session) {
                                          opts_hover(css = "stroke:#1B2631;"),
                                          opts_toolbar(pngname = "AHexploreR"),
                                          opts_selection(type = "single")
-                   ))
+                          ))
                    
                  })
                  

@@ -1,0 +1,13 @@
+name: AHexploreR
+title: AHexploreR
+username:
+account: waterresilientcities
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 3407119
+bundleId: 3995761
+url: https://waterresilientcities.shinyapps.io/AHexploreR/
+when: 1608109203.61043
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: archive

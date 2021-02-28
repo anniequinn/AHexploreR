@@ -1,7 +1,3 @@
-# Next steps:
-# Add text labels
-
-
 # -------------------------------------------------------------------------
 # SETUP -------------------------------------------------------------------
 # -------------------------------------------------------------------------
@@ -27,7 +23,11 @@ extraCols <- c("#0D0A0B", "#FABE46")
 WRCcols <- c(WRCcols, extraCols)
 myGreys <- readRDS("myGreys.RDS")
 
-dl <- readRDS("genericAH.RDS")
+# dl <- readRDS("genericAH.RDS")
+
+dl <- 
+  list(dv = readRDS("templateGeneric.RDS")$vInfo %>% select(1:3) %>% mutate(levelName = fct_inorder(levelName)),
+       de = readRDS("templateGeneric.RDS")$edgelist)
 
 tmpKey <-
   dl$dv %>%
@@ -83,7 +83,7 @@ ui <- fluidPage(
     # -------------------------------------------------------------------------
     sidebarPanel(width = 2,   
                  
-                 tags$h2("AHexploreR V2.0"),
+                 tags$h2("AHexploreR V2.1"),
                  
                  fluidRow(
                    column(width = 2, dropdownButton(
@@ -148,11 +148,13 @@ ui <- fluidPage(
                               fluidRow(colourInput("col4", NULL, value = WRCcols[[4]], palette = "limited", allowedCols = WRCcols, closeOnClick = TRUE), style=list("padding-right: 0%;")),
                               fluidRow(colourInput("col5", NULL, value = WRCcols[[5]], palette = "limited", allowedCols = WRCcols, closeOnClick = TRUE), style=list("padding-right: 0%;"))
                               
-                       )),
+                       ),
+                       
+                       ),
                      
                      
                      # SUBMIT BUTTON
-                     actionBttn(inputId = "submitMatrix", label = "Update network", style = "jelly", color = "primary"),
+                     actionButton(inputId = "submitMatrix", label = "Update network", class = "btn-primary"),
                      hr(style = "border-top: 1px solid #D0D5DA;"),
                      
                      
@@ -191,18 +193,20 @@ ui <- fluidPage(
                  
                  
                  # AH LEVELS
-                 sliderInput("selectLevels", label = "Select levels:", 
+                 sliderInput("selectLevels", label = "Select level(s):", 
                              min = 1, max = 5, value = c(1,5), step = 1, ticks = FALSE),
                  hr(style = "border-top: 1px solid #D0D5DA;"),
                  
                  
                  # PICKER
                  pickerInput(inputId = "myNodes", label = "Select node subnetwork:", 
-                             choices = pickerChoices, selected = "No selection"),
+                             choices = pickerChoices, selected = "No selection", 
+                             multiple = FALSE, 
+                             options = list(`live-search` = TRUE, size = 10, style = "btn-primary")),
                  
                  
                  # SUBMIT BUTTON
-                 actionBttn(inputId = "myReset", label = "Reset nodes", style = "jelly", color = "primary"),
+                 actionButton(inputId = "myReset", label = "Reset nodes", class = "btn-primary"),
                  
                  hr(style = "border-top: 1px solid #D0D5DA;"),
                  
@@ -212,7 +216,9 @@ ui <- fluidPage(
                                                  min = 0, max = 1, value = 0.1, step = 0.01, ticks = FALSE)),
                    column(width = 6, sliderInput("nodeSubAlpha", label = "Nodes", 
                                                  min = 0, max = 1, value = 0.1, step = 0.01, ticks = FALSE))
-                 )
+                 ),
+                 
+                 markdown("###### *Developed by Annie Visser-Quinn (annievisserquinn@gmail.com) as part of the Water Resilient Cities project, funded by UKRI EPSRC, grant number EP/N030419/1. Maintained by David Morrison (dh48@hw.ac.uk). Source code is available via github: https://github.com/avisserquinn/AHExploreR.*")
                  
     ),
     
@@ -243,9 +249,9 @@ ui <- fluidPage(
               
               # GGIRAPH OUTPUT
               tabsetPanel(type = "tabs",
-                          tabPanel("Plot", girafeOutput(outputId = "basePlot", width = "auto", height = "auto")),
-                          tabPanel("Table - Nodes", dataTableOutput(outputId = "tableNodes")),
-                          tabPanel("Table - Edges", dataTableOutput(outputId = "tableEdges"))
+                          tabPanel("Plot", br(), girafeOutput(outputId = "basePlot", width = "auto", height = "auto")),
+                          tabPanel("Table - Nodes", br(), dataTableOutput(outputId = "tableNodes")),
+                          tabPanel("Table - Edges", br(), dataTableOutput(outputId = "tableEdges"))
               )
               
     ) 
@@ -509,8 +515,8 @@ server <- function(input, output, session) {
                      select(Level = level, "Level name" = levelName, "Node name" = vName), 
                    rownames = FALSE, 
                    selection = "none", 
-                   options = list(pageLength = 100, 
-                                  lengthMenu = c(50,100,250,500))))
+                   options = list(pageLength = 25, 
+                                  lengthMenu = c(25,50,100,250,500))))
                  
                  output$tableEdges <- renderDataTable(datatable(
                    vl$edges %>% 
@@ -518,8 +524,8 @@ server <- function(input, output, session) {
                      select("Level from" = fromLevel, "Level to" = toLevel, "Edge from" = from, "Edge to" = to), 
                    rownames = FALSE, 
                    selection = "none", 
-                   options = list(pageLength = 100, 
-                                  lengthMenu = c(50,100,250,500))))
+                   options = list(pageLength = 25, 
+                                  lengthMenu = c(25,50,100,250,500))))
                  
                })
   

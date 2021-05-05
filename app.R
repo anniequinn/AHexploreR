@@ -1,6 +1,10 @@
 # -------------------------------------------------------------------------
 # SETUP -------------------------------------------------------------------
 # -------------------------------------------------------------------------
+
+rm(list = ls()); cat("\014")
+setwd(dirname(rstudioapi::getSourceEditorContext()$path))
+
 library(tidyverse)
 library(pbapply)
 library(data.table)
@@ -25,8 +29,10 @@ myGreys <- readRDS("myGreys.RDS")
 
 # dl <- readRDS("genericAH.RDS")
 
+definitions <- read.csv("USAH_Definitions_20210504.csv") %>% mutate(level = as.numeric(level), levelName = fct_inorder(levelName))
+
 dl <- 
-  list(dv = readRDS("templateGeneric.RDS")$vInfo %>% select(1:3) %>% mutate(levelName = fct_inorder(levelName)),
+  list(dv = readRDS("templateGeneric.RDS")$vInfo %>% select(1:3) %>% mutate(levelName = fct_inorder(levelName)) %>% merge(definitions, by = c("level", "levelName", "vName"), all = TRUE) %>% drop_na(),
        de = readRDS("templateGeneric.RDS")$edgelist)
 
 tmpKey <-
@@ -36,6 +42,7 @@ tmpKey <-
   mutate(tmp = c("l1FP", "l2VPM", "l3GF", "l4ORP", "l5PO"),
          label = paste0(level, " - ", levelName)) %>%
   select(-level, -levelName)
+
 
 
 
@@ -251,7 +258,36 @@ ui <- fluidPage(
               tabsetPanel(type = "tabs",
                           tabPanel("Plot", br(), girafeOutput(outputId = "basePlot", width = "auto", height = "auto")),
                           tabPanel("Table - Nodes", br(), dataTableOutput(outputId = "tableNodes")),
-                          tabPanel("Table - Edges", br(), dataTableOutput(outputId = "tableEdges"))
+                          tabPanel("Table - Edges", br(), dataTableOutput(outputId = "tableEdges")),
+                          tabPanel("References", br(), markdown(
+                            "- Abel, J.R. and Deitz, R. (2013) 'Do Big Cities Help College Graduates Find Better Jobs? Liberty Street Economics. Available at: [Do Big Cities Help College Graduates Find Better Jobs? -Liberty Street Economics (newyorkfed.org)](https://libertystreeteconomics.newyorkfed.org/2013/05/do-big-cities-help-college-graduates-find-better-jobs.html#.V3bs_ZMrK9Z) (Accessed: 03/05/2021)
+                            - Adams, J., Greenwood, D., Thomashow, M. and Russ, A. (2016) 'Sense of place', The Nature of Cities. Available at: [https://www.thenatureofcities.com/2016/05/26/sense-of-place/](https://www.thenatureofcities.com/2016/05/26/sense-of-place/) (Accessed: 09/03/21).
+                            - Allwinkle, S. and Cruickshank, P. (2011) Creating Smart-er Cities: An Overview. Journal of Urban Technology, 18:2, 1-18. [https://doi.org/10.1080/10630732.2011.601103](https://doi.org/10.1080/10630732.2011.601103)
+                            - Arup (2015) 'City Resilience Framework'. Available at: [https://www.rockefellerfoundation.org/report/city-resilience-framework/](https://www.rockefellerfoundation.org/report/city-resilience-framework/)
+                            - Beall, J. (2016) 'Who needs the other more: cities or universities?'. Available at: [https://www.britishcouncil.org/voices-magazine/who-needs-other-more-cities-or-universities](https://www.britishcouncil.org/voices-magazine/who-needs-other-more-cities-or-universities)
+                            - Commission, E. (2020) The Future of Cities: Cities as Innovation Hubs. Available at: [https://urban.jrc.ec.europa.eu/thefutureofcities/cities-as-innovation-hubs#the-chapter](https://urban.jrc.ec.europa.eu/thefutureofcities/cities-as-innovation-hubs#the-chapter) (Accessed: 09/03/21).
+                            - Council of Europe (2005) Council of Europe Framework Convention on the Value of Cultural Heritage for Society. Available at: [https://www.coe.int/en/web/conventions/full-list/-/conventions/rms/0900001680083746](https://www.coe.int/en/web/conventions/full-list/-/conventions/rms/0900001680083746) (Accessed: 09/03/21)
+                            - Dunn, N. and Coulton, C. (2016) Future of health and healthcare provision in cities. Future of Cities: Working Paper. Foresight, Government Office for Science. Available at: [Future of health and healthcare provision in cities (publishing.service.gov.uk)](https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/545772/gs-16-15-future-of-cities-health-healthcare-provision.pdf) (Accessed 04/05/2021).
+                            - EEA (2015) Urban sustainability issues - What is a resource-efficient city?' Available at: [Urban sustainability issues - What is a resource-efficient city? (europa.eu)](https://www.eea.europa.eu/publications/resource-efficient-cities/file) (Accessed 04/05/2021).
+                            - Exenberger, A. and Strobl, P. (2013) 'Introduction', in Globalisation and the City: Two Connected Phenomena in Past and Present [online]. Innsbruck: Innsbruck University Press.
+                            - Foster, S. and Iaione, C. (2017) Ostrom in the City: Design Principles for the Urban Commons. The nature of cities. Available at: [Ostrom in the City: Design Principles for the Urban Commons - The Nature of Cities](https://www.thenatureofcities.com/2017/08/20/ostrom-city-design-principles-urban-commons/) (Accessed 04/05/2021).
+                            - Goodland, R. (1995) 'The Concept of Environmental Sustainability', Annual Review of Ecology and Systematics, 26, pp. 1-24.
+                            - Knapp, C. (2008) Making Multicultural Places. Project for Public Spaces. Available at: [Making Multicultural Places (pps.org)](https://www.pps.org/article/multicultural-places) Accessed (04/05/2021).
+                            - Knox, P.L. (1996) 'Globalization and the world city hypothesis', Scottish Geographical Magazine, 112(2), pp. 124-126.
+                            - LeGrand, L. and Malany, P.E. (2012) A reflection on the Importance of Settlements in Humanitarian Shelter Assistance. Available at: [https://www.alnap.org/help-library/a-reflection-on-the-importance-of-settlements-in-humanitarian-shelter-assistance](https://www.alnap.org/help-library/a-reflection-on-the-importance-of-settlements-in-humanitarian-shelter-assistance).
+                            - Longley, R. (2020) 'Equity vs. Equality: What is the difference?'. Available at: [https://www.thoughtco.com/equity-vs-equality-4767021](https://www.thoughtco.com/equity-vs-equality-4767021).
+                            - Lonsdale, J., Schweppenstedde, D., Van Stolk, C., Guerin, B., Hafner, M. (2015) 'One Place, One Budget? Approaches to pooling resources for public service transformation. RAND Corportation. Available at: [One Place, One Budget? Approaches to pooling resources for public service transformation | RAND](https://www.rand.org/pubs/research_reports/RR1017.html) (Accessed 04/05/2021).
+                            - Massey, D. (2004) 'Geographies of responsibility', Geografiska Annaler: Series B, Human Geography, 86(1), pp. 5-18.
+                            - Roberts, J. (2018) Urban Safety Project: Urban Safety and Security in Myanmar. The Asia Foundation.
+                            - Russell, H., Smith, A. and Leverton, P. (2011) Sustaining cultural identity and a sense of place - new wine in old bottles or old wine in new bottles? The College of Estate Management.
+                            - Smith, N. (2018) How Universities Make Cities Great. BloombergOpinion. Available at: [How Universities Make Cities Great - Bloomberg](https://www.bloomberg.com/opinion/articles/2018-03-06/how-universities-make-cities-great) (Accessed 04/05/021).
+                            - UNDRR (2020) 'Hazard definition & classification review: Technical report'. 10/09/2020. Available at: https://www.undrr.org/publication/hazard-definition-and-classification-review.
+                            - UNHCR (2020) Settlement in urban areas. Available at: https://emergency.unhcr.org/entry/36413/settlement-in-urban-areas (Accessed: 09/03/21).
+                            - UNSDG (2019) Leaving no-one behind: A UNSDG Operational Guide for UN Country Teams (Interim Draft). Available at: [Interim-Draft-Operational-Guide-on-LNOB-for-UNCTs.pdf](https://unsdg.un.org/sites/default/files/Interim-Draft-Operational-Guide-on-LNOB-for-UNCTs.pdf) (Accessed 04/05/2021).
+                            - World Bank (2017) 'Opportunities and Challenges of Urbanization: Planning for an Unprecedented Future'. Available at: [Opportunities and Challenges of Urbanization: Planning for an Unprecedented Future (worldbank.org)](https://www.worldbank.org/en/events/2017/09/25/opportunities-and-challenges-of-urbanization) (Accessed 03/05/2021).
+                            - World Bank (2021) Inclusive Cities. Available at: [Inclusive Cities (worldbank.org)](https://www.worldbank.org/en/topic/inclusive-cities) Accessed (-4/05/2021)."
+
+                          ))
               )
               
     ) 
@@ -512,7 +548,7 @@ server <- function(input, output, session) {
                  output$tableNodes <- renderDataTable(datatable(
                    vl$vertices %>% 
                      filter(level >= input$selectLevels[[1]] & level <= input$selectLevels[[2]]) %>% 
-                     select(Level = level, "Level name" = levelName, "Node name" = vName), 
+                     select(Level = level, "Level name" = levelName, "Node name" = vName, "Definition" = definition), 
                    rownames = FALSE, 
                    selection = "none", 
                    options = list(pageLength = 25, 

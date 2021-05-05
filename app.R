@@ -2,9 +2,6 @@
 # SETUP -------------------------------------------------------------------
 # -------------------------------------------------------------------------
 
-rm(list = ls()); cat("\014")
-setwd(dirname(rstudioapi::getSourceEditorContext()$path))
-
 library(tidyverse)
 library(pbapply)
 library(data.table)
@@ -29,10 +26,10 @@ myGreys <- readRDS("myGreys.RDS")
 
 # dl <- readRDS("genericAH.RDS")
 
-definitions <- read.csv("USAH_Definitions_20210504.csv") %>% mutate(level = as.numeric(level), levelName = fct_inorder(levelName))
+definitions <- read.csv("USAH_Definitions_20210504.csv") %>% mutate(level = as.numeric(level), levelName = fct_inorder(levelName)) %>% select(-reference)
 
 dl <- 
-  list(dv = readRDS("templateGeneric.RDS")$vInfo %>% select(1:3) %>% mutate(levelName = fct_inorder(levelName)) %>% merge(definitions, by = c("level", "levelName", "vName"), all = TRUE) %>% drop_na(),
+  list(dv = readRDS("templateGeneric.RDS")$vInfo %>% select(1:3) %>% mutate(levelName = fct_inorder(levelName)) %>% merge(definitions, by = c("level", "levelName", "vName"), all = TRUE) %>% drop_na(definition),
        de = readRDS("templateGeneric.RDS")$edgelist)
 
 tmpKey <-
@@ -285,7 +282,7 @@ ui <- fluidPage(
                             - UNHCR (2020) Settlement in urban areas. Available at: https://emergency.unhcr.org/entry/36413/settlement-in-urban-areas (Accessed: 09/03/21).
                             - UNSDG (2019) Leaving no-one behind: A UNSDG Operational Guide for UN Country Teams (Interim Draft). Available at: [Interim-Draft-Operational-Guide-on-LNOB-for-UNCTs.pdf](https://unsdg.un.org/sites/default/files/Interim-Draft-Operational-Guide-on-LNOB-for-UNCTs.pdf) (Accessed 04/05/2021).
                             - World Bank (2017) 'Opportunities and Challenges of Urbanization: Planning for an Unprecedented Future'. Available at: [Opportunities and Challenges of Urbanization: Planning for an Unprecedented Future (worldbank.org)](https://www.worldbank.org/en/events/2017/09/25/opportunities-and-challenges-of-urbanization) (Accessed 03/05/2021).
-                            - World Bank (2021) Inclusive Cities. Available at: [Inclusive Cities (worldbank.org)](https://www.worldbank.org/en/topic/inclusive-cities) Accessed (-4/05/2021)."
+                            - World Bank (2021) Inclusive Cities. Available at: [Inclusive Cities (worldbank.org)](https://www.worldbank.org/en/topic/inclusive-cities) (Accessed: 04/05/2021)."
 
                           ))
               )
@@ -546,7 +543,7 @@ server <- function(input, output, session) {
                  
                  
                  output$tableNodes <- renderDataTable(datatable(
-                   vl$vertices %>% 
+                   dl$dv %>% 
                      filter(level >= input$selectLevels[[1]] & level <= input$selectLevels[[2]]) %>% 
                      select(Level = level, "Level name" = levelName, "Node name" = vName, "Definition" = definition), 
                    rownames = FALSE, 

@@ -5,9 +5,9 @@ account: waterresilientcities
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 3407119
-bundleId: 4560332
+bundleId: 4584722
 url: https://waterresilientcities.shinyapps.io/AHexploreR/
-when: 1620219506.12636
+when: 1620721408.22544
 asMultiple: FALSE
 asStatic: FALSE
 ignoredFiles: genericAH.RDS|README.md

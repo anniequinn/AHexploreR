@@ -112,7 +112,7 @@ visLayout <- function(edgelist, vInfo, key, spacing) {
   vertices <-
     findNodes(LAYOUT_GG) %>%
     as_tibble %>%
-    select(level, levelName, vName = name, x, y, theta)
+    select(level, levelName, vName = name, definition, x, y, theta) 
 
 
   # OUTPUT ------------------------------------------------------------------

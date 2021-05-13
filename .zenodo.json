@@ -19,17 +19,31 @@
     "contributors": [
     {
       "name": "David Morrison",
-      "email": "insert here",
-      "ORCiD": "insert here",
+      "email": "DH48@hw.ac.uk",
+      "ORCiD": "0000-0003-4612-081X",
       "affiliation": "Water Resilient Cities at Heriot-Watt University",
       "type": "Code; Maintenance",
     },
     {
-      "name": "Kerri McClymont",
-      "email": "insert here",
-      "ORCiD": "insert here",
+      "name": "Melissa Bedinger",
+      "email": "M.Bedinger@hw.ac.uk",
+      "ORCiD": "0000-0001-6097-1595",
       "affiliation": "Water Resilient Cities at Heriot-Watt University",
       "type": "Researcher",
+    },
+    {
+      "name": "Kerri McClymont",
+      "email": "KM39@hw.ac.uk",
+      "ORCiD": "0000-0003-0235-7786",
+      "affiliation": "Water Resilient Cities at Heriot-Watt University",
+      "type": "Researcher",
+    },
+    {
+      "name": "Lindsay Beevers",
+      "email": "L.Beevers@hw.ac.uk",
+      "ORCiD": "0000-0002-1597-273X",
+      "affiliation": "Water Resilient Cities at Heriot-Watt University",
+      "type": "Principal Investigator",
     },
     {
       "name": "Keep adding names in the same format",

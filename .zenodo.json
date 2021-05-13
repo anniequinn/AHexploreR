@@ -1,0 +1,56 @@
+{
+    "title": "AHexploreR",
+    "version": "v2.1",
+    "description": "An RShiny app to explore the Water Resilient Cities project's Urban Systems Abstraction Hierarchy",
+    "publication_date": "2021-05-13",
+
+    "license": "MIT",
+    "access_right": "open",
+    "upload_type": "software",
+
+    "creators": [
+        {
+            "name": "Annie Visser-Quinn",
+            "email": "annievisserquinn@gmail.com",
+            "affiliation": "(formerly) Water Resilient Cities at Heriot-Watt University",
+        }
+    ],
+
+    "contributors": [
+    {
+      "name": "David Morrison",
+      "email": "insert here",
+      "ORCiD": "insert here",
+      "affiliation": "Water Resilient Cities at Heriot-Watt University",
+      "type": "Code; Maintenance",
+    },
+    {
+      "name": "Kerri McClymont",
+      "email": "insert here",
+      "ORCiD": "insert here",
+      "affiliation": "Water Resilient Cities at Heriot-Watt University",
+      "type": "Researcher",
+    },
+    {
+      "name": "Keep adding names in the same format",
+      "email": "insert here",
+      "ORCiD": "insert here",
+      "affiliation": "Water Resilient Cities at Heriot-Watt University",
+      "type": "I think our options here are Code, Maintenance (that is of the code), Researcher (i.e. the underpinning logic/knowledge etc.) and Principal Investigator",
+    },
+  ],
+
+  "related_identifiers": [
+      {
+          "scheme": "url",
+          "identifier": "https://github.com/avisserquinn/AHexploreR/releases/latest",
+          "relation": "isSupplementTo"
+      },
+      {
+          "scheme": "doi",
+          "identifier": "10.5281/zenodo.4756676",
+          "relation": "isVersionOf"
+      }
+  ],
+
+}

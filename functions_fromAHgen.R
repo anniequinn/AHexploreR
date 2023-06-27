@@ -2,19 +2,19 @@ visLayout <- function(edgelist, vInfo, key, spacing) {
 
   require(ggraph)
 
-  vInfo <- vInfo %>% arrange(level, vName)
+  vInfo <- vInfo %>% arrange(level, Node)
   edgelist <- edgelist %>% arrange(layer)
 
 
   # DUMMY VERTEX ------------------------------------------------------------
   VINFO <- vInfo %>% filter(level == min(level))
 
-  EDGELIST <- edgelist %>% add_row(.before = 1, layer = "dummyLayer", from = "dummyVertex", to = VINFO$vName)
+  EDGELIST <- edgelist %>% add_row(.before = 1, layer = "dummyLayer", from = "dummyVertex", to = VINFO$Node)
 
   VINFO <-
     vInfo %>%
     mutate(level = level + 1) %>%
-    add_row(.before = 1, level = 1, levelName = "dummyLevel", vName = "dummyVertex")
+    add_row(.before = 1, level = 1, levelName = "dummyLevel", Node = "dummyVertex")
 
   IGRAPH <- EDGELIST %>% select(from, to, weight) %>% graph.data.frame(directed = FALSE)
 
@@ -112,11 +112,11 @@ visLayout <- function(edgelist, vInfo, key, spacing) {
   vertices <-
     findNodes(LAYOUT_GG) %>%
     as_tibble %>%
-    select(level, levelName, vName = name, definition, x, y, theta) 
+    select(level, levelName, Node = name, definition, x, y, theta) 
 
 
   # OUTPUT ------------------------------------------------------------------
-  vertices$vName <- gsub("'", '', vertices$vName)
+  vertices$Node <- gsub("'", '', vertices$Node)
   edges$to <- gsub("'", '', edges$to)
 
   output <- list(edges = edges, vertices = vertices)
@@ -158,7 +158,7 @@ visPlot <- function(layout, key = NULL,
                      fill = level,
 
                      # Warning suppressed, need to add this for plotly interaction
-                     label = vName),
+                     label = Node),
 
                  shape = 21, colour = "#34495E") +
 
@@ -231,16 +231,16 @@ findOrphans <- function(edgelist) {
   
 }
 
-vNetwork <- function(vName, vInfo, edgelist, direction = c("both", "up", "down")) {
+vNetwork <- function(Node, vInfo, edgelist, direction = c("both", "up", "down")) {
   
   # FUNCTIONS
-  networkDown <- function(vName, vInfo, edgelist) {
+  networkDown <- function(Node, vInfo, edgelist) {
     
     edges <- list()
     vertices <- list()
     
-    myVertex <- vName
-    myLevel <- vInfo %>% filter(vName %in% myVertex) %>% pull(level)
+    myVertex <- Node
+    myLevel <- vInfo %>% filter(Node %in% myVertex) %>% pull(level)
     
     vertices[[myLevel]] <- myVertex
     
@@ -254,20 +254,20 @@ vNetwork <- function(vName, vInfo, edgelist, direction = c("both", "up", "down")
     }
     
     vertices <- do.call(c, vertices)
-    vertices <- vInfo %>% filter(vName %in% vertices)
+    vertices <- vInfo %>% filter(Node %in% vertices)
     edges <- do.call(rbind, edges)
     
     list(vertices = vertices, edges = edges)
     
   }
   
-  networkUp <- function(vName, vInfo, edgelist) {
+  networkUp <- function(Node, vInfo, edgelist) {
     
     edges <- list()
     vertices <- list()
     
-    myVertex <- vName
-    myLevel <- vInfo %>% filter(vName %in% myVertex) %>% pull(level)
+    myVertex <- Node
+    myLevel <- vInfo %>% filter(Node %in% myVertex) %>% pull(level)
     
     vertices[[myLevel]] <- myVertex
     
@@ -281,7 +281,7 @@ vNetwork <- function(vName, vInfo, edgelist, direction = c("both", "up", "down")
     }
     
     vertices <- do.call(c, vertices)
-    vertices <- vInfo %>% filter(vName %in% vertices)
+    vertices <- vInfo %>% filter(Node %in% vertices)
     edges <- do.call(rbind, edges)
     
     list(vertices = vertices, edges = edges)
@@ -293,12 +293,12 @@ vNetwork <- function(vName, vInfo, edgelist, direction = c("both", "up", "down")
   edges <- list()
   vertices <- list()
   
-  myVertex <- vName
-  myLevel <- vInfo %>% filter(vName %in% myVertex) %>% pull(level)
+  myVertex <- Node
+  myLevel <- vInfo %>% filter(Node %in% myVertex) %>% pull(level)
   
   if((direction == "both" | direction == "up") & myLevel != 1) {
     
-    tmp <- networkUp(vName, vInfo, edgelist)
+    tmp <- networkUp(Node, vInfo, edgelist)
     edges[["up"]] <- tmp$edges
     vertices[["up"]] <- tmp$vertices
     
@@ -306,7 +306,7 @@ vNetwork <- function(vName, vInfo, edgelist, direction = c("both", "up", "down")
   
   if((direction == "both" | direction == "down") & myLevel != 5) {
     
-    tmp <- networkDown(vName, vInfo, edgelist)
+    tmp <- networkDown(Node, vInfo, edgelist)
     edges[["down"]] <- tmp$edges
     vertices[["down"]] <- tmp$vertices
     

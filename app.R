@@ -24,13 +24,14 @@ extraCols <- c("#0D0A0B", "#FABE46")
 WRCcols <- c(WRCcols, extraCols)
 myGreys <- readRDS("myGreys.RDS")
 
-# dl <- readRDS("genericAH.RDS")
-
-definitions <- read.csv("USAH_Definitions_20210504.csv") %>% mutate(level = as.numeric(level), levelName = fct_inorder(levelName)) %>% select(-reference)
-
 dl <- 
-  list(dv = readRDS("templateGeneric.RDS")$vInfo %>% select(1:3) %>% mutate(levelName = fct_inorder(levelName)) %>% merge(definitions, by = c("level", "levelName", "vName"), all = TRUE) %>% drop_na(definition),
-       de = readRDS("templateGeneric.RDS")$edgelist)
+  list(dv = readRDS("USAH_3.0_template_baseline_20230614.RDS")$vInfo %>% 
+         select(level, levelName, Node, definition) %>% 
+         mutate(levelName = 
+                  factor(levelName, levels = c("Purposes", "Outcomes", "Tasks", 
+                                               "Processes", "Resources"))) %>%
+         drop_na(definition),
+       de = readRDS("USAH_3.0_template_baseline_20230614.RDS")$edgelist)
 
 tmpKey <-
   dl$dv %>%
@@ -61,11 +62,11 @@ pickerChoices <- list(
   
   "No selection" = "No selection",
   
-  "Level 1 - Functional purposes" = dl$dv %>% filter(level == 1) %>% pull(vName),
-  "Level 2 - Values and priority measures" = dl$dv %>% filter(level == 2) %>% pull(vName),
-  "Level 3 - Generalised functions" = dl$dv %>% filter(level == 3) %>% pull(vName),
-  "Level 4 - Object-related processes" = dl$dv %>% filter(level == 4) %>% pull(vName),
-  "Level 5 - Physical objects" = dl$dv %>% filter(level == 5) %>% pull(vName)
+  "Level 1 - Purposes" = dl$dv %>% filter(level == 1) %>% pull(Node),
+  "Level 2 - Outcomes" = dl$dv %>% filter(level == 2) %>% pull(Node),
+  "Level 3 - Tasks" = dl$dv %>% filter(level == 3) %>% pull(Node),
+  "Level 4 - Processes" = dl$dv %>% filter(level == 4) %>% pull(Node),
+  "Level 5 - Resources" = dl$dv %>% filter(level == 5) %>% pull(Node)
   
 )
 
@@ -87,7 +88,7 @@ ui <- fluidPage(
     # -------------------------------------------------------------------------
     sidebarPanel(width = 2,   
                  
-                 tags$h2("AHexploreR V2.1"),
+                 tags$h2("AHexploreR v3.0"),
                  
                  fluidRow(
                    column(width = 2, dropdownButton(
@@ -111,11 +112,11 @@ ui <- fluidPage(
                        
                        
                        column(width = 3, tags$h5(strong(paste0("Level"))), tags$body(tags$div(id="h5", style="padding:3%")),
-                              fluidRow(tags$h5("1 - Functional purposes"), tags$body(tags$div(id="h5", style="padding:0.5%")), style=list("padding-left: 10%;")),
-                              fluidRow(tags$h5("2 - Values and priority measures"), tags$body(tags$div(id="h5", style="padding:0.25%")), style=list("padding-left: 10%;")),
-                              fluidRow(tags$h5("3 - Objective functions"), tags$body(tags$div(id="h5", style="padding:0.5%")), style=list("padding-left: 10%;")),
-                              fluidRow(tags$h5("4 - Object-related processes"), tags$body(tags$div(id="h5", style="padding:0.25%")), style=list("padding-left: 10%;")),
-                              fluidRow(tags$h5("5 - Physical objects"), tags$body(tags$div(id="h5", style="padding:0.5%")), style=list("padding-left: 10%;"))
+                              fluidRow(tags$h5("1 - Purposes"), tags$body(tags$div(id="h5", style="padding:0.5%")), style=list("padding-left: 10%;")),
+                              fluidRow(tags$h5("2 - Outcomes"), tags$body(tags$div(id="h5", style="padding:0.25%")), style=list("padding-left: 10%;")),
+                              fluidRow(tags$h5("3 - Tasks"), tags$body(tags$div(id="h5", style="padding:0.5%")), style=list("padding-left: 10%;")),
+                              fluidRow(tags$h5("4 - Processes"), tags$body(tags$div(id="h5", style="padding:0.25%")), style=list("padding-left: 10%;")),
+                              fluidRow(tags$h5("5 - Resources"), tags$body(tags$div(id="h5", style="padding:0.5%")), style=list("padding-left: 10%;"))
                        ),
                        
                        column(width = 2, tags$h5(strong(paste0("Arc angle"))),
@@ -253,11 +254,23 @@ ui <- fluidPage(
               
               # GGIRAPH OUTPUT
               tabsetPanel(type = "tabs",
-                          tabPanel("Plot", br(), girafeOutput(outputId = "basePlot", width = "auto", height = "auto")),
-                          tabPanel("Table - Nodes", br(), dataTableOutput(outputId = "tableNodes")),
-                          tabPanel("Table - Edges", br(), dataTableOutput(outputId = "tableEdges")),
-                          tabPanel("References", br(), markdown(
-                            "- Abel, J.R. and Deitz, R. (2013) 'Do Big Cities Help College Graduates Find Better Jobs? Liberty Street Economics. Available at: [Do Big Cities Help College Graduates Find Better Jobs? -Liberty Street Economics (newyorkfed.org)](https://libertystreeteconomics.newyorkfed.org/2013/05/do-big-cities-help-college-graduates-find-better-jobs.html#.V3bs_ZMrK9Z) (Accessed: 03/05/2021)
+                          tabPanel("AHexploreR", br(), girafeOutput(outputId = "basePlot", width = "auto", height = "auto")),
+                          tabPanel("Nodes", br(), dataTableOutput(outputId = "tableNodes")),
+                          tabPanel("Edges", br(), dataTableOutput(outputId = "tableEdges")),
+                          tabPanel("About", br(), markdown(
+                            "**Related Research**
+                            - Bedinger, M., McClymont, K., Beevers, L., Visser-Quinn, A., & Aitken, G. (2023). Five cities: Application of the Urban Systems Abstraction Hierarchy to characterize resilience across locations. Cities, 139, 104335. https://doi.org/10.1016/j.cities.2023.104355
+                            - McClymont, K., Bedinger, M., Beevers, L., & Walker, G. H. (2023). Applying the Urban Systems Abstraction Hierarchy as a Tool for Flood Resilience. Earth’s Future, 11(5), e2023EF003594. https://doi.org/10.1029/2023EF003594
+                            - Beevers, L., Bedinger, M., McClymont, K., Morrison, D., Aitken, G., & Visser-Quinn, A. (2022). Modelling systemic COVID-19 impacts in cities. npj Urban Sustainability, 2, 17. https://doi.org/10.1038/s42949-022-00060-2
+                            - Beevers, L., McClymont, K., & Bedinger, M. (2022). A hazard-agnostic model for unpacking systemic impacts in urban systems. Civil Engineering and Environmental Systems, 39(3), p. 224-241. https://doi.org/10.1080/10286608.2022.2083112
+                            - McClymont, K., Bedinger, M., Beevers, L., & Walker, G. (2022). Understanding urban resilience with the Urban Systems Abstraction Hierarchy. Sustainable Cities and Society, 80, 103729. https://doi.org/10.1016/j.scs.2022.103729
+                            - McClymont, K., Bedinger, M., Beevers, L., Walker, G., Morrison, D. (2021). ‘Chapter 2.2 – Analyzing city-scale resilience using a novel systems approach’, in Santos, P.P., Chmutina, & K. Von Meding, J., and Raju, E., (eds.) Understanding Disaster Risk. Elsevier, p. 179-201. https://doi.org/10.1016/B978-0-12-819047-0.00011-1
+                            - Bedinger, M., Beevers, L., Walker, G. H., Visser-Quinn, A., & McClymont, K. (2020). Urban systems: Mapping interdependencies and outcomes to support systems thinking. Earth’s Future, 8(3), e2019EF001389. http://dx.doi.org/10.1029/2019EF001389
+                            - Beevers, L., Walker, G., & Strathie, A. (2016). A systems approach to flood vulnerability. Civil Engineering and Environmental Systems, 33(3), p. 199-213. https://doi.org/10.1080/10286608.2016.1202931
+
+                            
+                            **Supporting References**
+                            - Abel, J.R. and Deitz, R. (2013) 'Do Big Cities Help College Graduates Find Better Jobs? Liberty Street Economics. Available at: [Do Big Cities Help College Graduates Find Better Jobs? -Liberty Street Economics (newyorkfed.org)](https://libertystreeteconomics.newyorkfed.org/2013/05/do-big-cities-help-college-graduates-find-better-jobs.html#.V3bs_ZMrK9Z) (Accessed: 03/05/2021)
                             - Adams, J., Greenwood, D., Thomashow, M. and Russ, A. (2016) 'Sense of place', The Nature of Cities. Available at: [https://www.thenatureofcities.com/2016/05/26/sense-of-place/](https://www.thenatureofcities.com/2016/05/26/sense-of-place/) (Accessed: 09/03/21).
                             - Allwinkle, S. and Cruickshank, P. (2011) Creating Smart-er Cities: An Overview. Journal of Urban Technology, 18:2, 1-18. [https://doi.org/10.1080/10630732.2011.601103](https://doi.org/10.1080/10630732.2011.601103)
                             - Arup (2015) 'City Resilience Framework'. Available at: [https://www.rockefellerfoundation.org/report/city-resilience-framework/](https://www.rockefellerfoundation.org/report/city-resilience-framework/)
@@ -411,7 +424,7 @@ server <- function(input, output, session) {
                                            r = level+addR, 
                                            start = (180-angle)*pi/180, 
                                            end = (180+angle)*pi/180),
-                                       size = 1, 
+                                       linewidth = 1, 
                                        colour = myGreys[[9]], 
                                        linetype = "dotted", 
                                        alpha = 0.5)
@@ -451,7 +464,7 @@ server <- function(input, output, session) {
                                       y = y, 
                                       yend = yend),
                                   
-                                  size = 0.2, 
+                                  linewidth = 0.2, 
                                   colour = myGreys[input$edgeGrey-1], 
                                   alpha = input$edgeAlpha,
                                   show.legend = FALSE) 
@@ -468,8 +481,8 @@ server <- function(input, output, session) {
                                               y = y,
                                               fill = levelName,
                                               size = levelName,
-                                              tooltip = vName, 
-                                              data_id = vName),
+                                              tooltip = Node, 
+                                              data_id = Node),
                                           
                                           alpha = nodeAlpha,
                                           shape = 21, 
@@ -488,8 +501,8 @@ server <- function(input, output, session) {
                                                 y = y,
                                                 fill = levelName,
                                                 size = levelName,
-                                                tooltip = vName, 
-                                                data_id = vName),
+                                                tooltip = Node, 
+                                                data_id = Node),
                                             
                                             alpha = nodeAlpha + nodeFade,
                                             shape = 21, 
@@ -545,7 +558,7 @@ server <- function(input, output, session) {
                  output$tableNodes <- renderDataTable(datatable(
                    dl$dv %>% 
                      filter(level >= input$selectLevels[[1]] & level <= input$selectLevels[[2]]) %>% 
-                     select(Level = level, "Level name" = levelName, "Node name" = vName, "Definition" = definition), 
+                     select(Level = level, "Level name" = levelName, "Node name" = Node, "Definition" = definition), 
                    rownames = FALSE, 
                    selection = "none", 
                    options = list(pageLength = 25, 

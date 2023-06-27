@@ -264,7 +264,7 @@ ui <- fluidPage(
                             
                             The USAH is a network consisting of five levels of increasing abstraction. At the bottom of the hierarchy (Level 5) are the Resources e.g., Hospitals. These object types are linked to Processes (Level 4) they support e.g., Provide life-threatening healthcare services, then to Tasks (Level 3) they achieve e.g., Public health, then to Outcomes (Level 2) e.g., Effective safeguards to human health and life, and finally to Purposes (Level 1) e.g., Social opportunity and care. These system parts are nodes, which are linked between levels through their functionality, connecting the physical to the abstract. Moving upward through the levels the nodes are connected by asking ‘why the node exists’; moving downward levels the nodes are connected by asking ‘how a node is afforded’. These links represent the ‘means’ that a system can use to achieve defined ‘ends’, explicitly connecting the physical and abstract.
                             
-                            The USAH in the AHexploreR is for a generic UK city. This 'template' version can be modified to represent a specific locations (e.g. Edinburgh or Manchester) and explore the interconnected impacts of a specific scenario (e.g. 'everyday' baseline conditions or a 1:1000-year flood). For examples of such modifications, additional open software packages [OSMtidy](https://github.com/avisserquinn/OSMtidy) and [AHgen](https://github.com/avisserquinn/AHgen) are used (see Related Research for more detail).
+                            The USAH in the AHexploreR is for a generic UK city. This 'template' version can be modified to represent a specific location (e.g. Edinburgh or Manchester) and explore the interconnected impacts of a specific scenario (e.g. 'everyday' baseline conditions or a 1:1000-year flood). For such modifications, additional open software packages [OSMtidy](https://github.com/avisserquinn/OSMtidy) and [AHgen](https://github.com/avisserquinn/AHgen) are used (see Related Research for more detail and examples).
                             
 
                             **Related Research**
@@ -542,7 +542,7 @@ server <- function(input, output, session) {
                  
                  basePlot <- basePlot + 
                    labs(caption = paste0("Generated ", Sys.Date(), 
-                                         " using the AHexploreR @ mbedinger.shinyapps.io/AHexploreR",
+                                         " using the AHexploreR at https://mbedinger.shinyapps.io/AHexploreR",
                                          "\nWater Resilient Cities - EPSRC EP/N030419/1")) +
                    theme(plot.caption = element_text(colour = myGreys[[7]], size = 12))
                  

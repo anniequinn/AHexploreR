@@ -16,7 +16,7 @@ visLayout <- function(edgelist, vInfo, key, spacing) {
     mutate(level = level + 1) %>%
     add_row(.before = 1, level = 1, levelName = "dummyLevel", Node = "dummyVertex")
 
-  IGRAPH <- EDGELIST %>% select(from, to, weight) %>% graph.data.frame(directed = FALSE)
+  IGRAPH <- EDGELIST %>% select(from, to, weight) %>% graph_from_data_frame(directed = FALSE)
 
 
   # SUGIYAMA LAYOUT TEMPLATE ------------------------------------------------

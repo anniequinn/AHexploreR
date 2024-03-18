@@ -12,12 +12,15 @@ library(ggraph)
 library(shinyMatrix)
 library(DT)
 library(colourpicker)
+library(gdtools)
 
 
 # -------------------------------------------------------------------------
 # DATA --------------------------------------------------------------------
 # -------------------------------------------------------------------------
 source("functions.R")
+
+gdtools::register_gfont(family = "Arimo")
 
 WRCcols <- c("#CCB1B9", "#607EBC", "#77B7A6", "#64324D", "#413D4C")
 extraCols <- c("#0D0A0B", "#FABE46")
@@ -522,11 +525,11 @@ server <- function(input, output, session) {
                  # Manipulate non-data ink
                  basePlot <- basePlot + 
                    
-                   theme_void(base_size = 18, base_family = "sans-serif") +
+                   theme_void(base_size = 18, base_family = "Arimo") +
                    
                    theme(legend.title = element_blank(),
-                         legend.text = element_text(margin = margin(r = 25, unit = "pt")),
-                         legend.text.align = 0,
+                         legend.text = element_text(hjust = 0, 
+                                                    margin = margin(r = 25, unit = "pt")),
                          legend.position = "top",
                          text = element_text(colour = myGreys[[2]])) +
                    
